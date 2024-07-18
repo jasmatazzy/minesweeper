@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import Gameboard from "../Gameboard/";
 import UserSettings from "../UserSettings";
 
@@ -18,9 +18,6 @@ const Board = (props: BoardProps): JSX.Element => {
   const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(16);
   const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(16);
   const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(40);
-  const [squaresState, setSquaresState] = useState<{
-    [key: number]: { [key: number]: boolean };
-  }>({});
   const [gameboardMineSquareLocations, setGameboardMineSquareLocations] =
     useState({});
   const [gameboardOpenSquareLocations, setGameboardOpenSquareLocations] =
@@ -53,19 +50,40 @@ const Board = (props: BoardProps): JSX.Element => {
     */
 
     const mineCount = parseInt(
-      (document.getElementById(`mine-count`) as HTMLInputElement).value, 10
+      (document.getElementById(`mine-count`) as HTMLInputElement).value,
+      10
     );
     setNumberOfMinesOnBoard(mineCount);
-
-    console.log(typeof mineCount);
   };
 
   const handleSetSquaresState = () => {
     /*
-  }
+     */
+  };
 
   const handleGameStarted = () => {
+    console.log(`the game has begun`);
+    const buryTheMines = (): { [row: number]: { [column: number]: true } } => {
+      const mineLocations: { [row: number]: { [column: number]: true } } = {};
+      Array.from({ length: numberOfMinesOnBoard }).forEach(() => {
+        const randomRow = Math.floor(Math.random() * numberOfRowsOnBoard);
+        const randomColumn = Math.floor(Math.random() * numberOfSquaresOnEachRow);
+        const isMineAlreadyBuried =
+          mineLocations[randomRow] && mineLocations[randomRow][randomColumn];
+        if (!isMineAlreadyBuried) {
+          if (!mineLocations[randomRow]) {
+            mineLocations[randomRow] = {};
+          }
+          mineLocations[randomRow][randomColumn] = true;
+        }
+      });
+      console.log(`gameboard minesquare locations ${JSON.stringify(gameboardMineSquareLocations, null, 2)}`)
+      setGameboardMineSquareLocations(mineLocations)
+      return gameboardMineSquareLocations;
+    };
+    buryTheMines();
     /* When the user clicks to start the game:
+    ***gameboardMineSquareLocations
     - openNeighbors = open all neighbors, looping over any who also have 0 mine neighbors;
       check that each open square that is touching a closed square has at least one mine neighbor,
       if not open its neighbors
@@ -128,7 +146,8 @@ const Board = (props: BoardProps): JSX.Element => {
   return (
     <div>
       <UserSettings
-        handleClick={handleSetMineCount}
+        getMineCount={handleSetMineCount}
+        startGame={handleGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
       />
       <Gameboard
