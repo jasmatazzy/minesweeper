@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, {useEffect } from "react";
 import Row from "../Row";
 import Square from "../../Square";
 // import LookUpTable from "../Board";
@@ -28,10 +28,10 @@ side effect runs while game is not started, when user updates desired number of 
 or columns, or when isGameStarted is set to true; Live board displays on final useEffect update of isGameStarted
  */
 
-  const isObjectEmpty = (object: {}) => {
-    if (Object.keys(object).length <= 0) return true;
-    return false;
-  };
+  // const isObjectEmpty = (object: {}) => {
+  //   if (Object.keys(object).length <= 0) return true;
+  //   return false;
+  // };
 
   useEffect(() => {}, []);
 
