@@ -1,7 +1,16 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState } from "react";
 import Gameboard from "../Gameboard/";
+import UserSettings from "../UserSettings";
 
-const Board: FC = () => {
+interface BoardProps {}
+
+type LookUpTable = {
+  [row: number]: {
+    [column: number]: boolean;
+  };
+};
+
+const Board = (props: BoardProps): JSX.Element => {
   /* STATE SETTERS for GameboardComponent*/
   const [isGameStarted, setIsGameStarted] = useState(true);
   const [isGameOver, setIsGameOver] = useState(true);
@@ -9,15 +18,18 @@ const Board: FC = () => {
   const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(16);
   const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(16);
   const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(40);
-  const [squaresState, setSquaresState] = useState({});
+  const [squaresState, setSquaresState] = useState<{
+    [key: number]: { [key: number]: boolean };
+  }>({});
   const [gameboardMineSquareLocations, setGameboardMineSquareLocations] =
     useState({});
   const [gameboardOpenSquareLocations, setGameboardOpenSquareLocations] =
-    useState({});
+    useState<LookUpTable>({});
   const [
     gameboardNeighborSquareLocations,
     setGameboardNeighborSquareLocations,
   ] = useState({});
+  /* STATE SETTERS for user inputs*/
 
   /* EVENT HANDLERS */
   const handleSetRowLength = () => {
@@ -39,6 +51,13 @@ const Board: FC = () => {
     -Set mine count to 30
     -Receive input from user for valid range of mine counts
     */
+
+    const mineCount = parseInt(
+      (document.getElementById(`mine-count`) as HTMLInputElement).value, 10
+    );
+    setNumberOfMinesOnBoard(mineCount);
+
+    console.log(typeof mineCount);
   };
 
   const handleSetSquaresState = () => {
@@ -58,7 +77,7 @@ const Board: FC = () => {
     - openNeighbors
       */
   };
-  const handleSquareMainClick = () => {
+  const handleSquareMainClick = (squareRow: number, squareColumn: number) => {
     /*
      Animate the smiley face. If game is not started, handleGameStarted; if square is already open,
      or has a flag, do not handle; Set square to open.
@@ -73,8 +92,22 @@ const Board: FC = () => {
     this is the number of squares on the board (rows* columns) minus the number of mines set on the board; 
     if gameboardOpenSquareLocations has this number of entries, the game must be won— all remaining squares, whether flagged or not, are mines
     */
-    setSquaresState((prevState: any, newSquareState: any) => ({ ...prevState, newSquareState }));
+
+    setGameboardOpenSquareLocations((prevState) => {
+      const newState = { ...prevState };
+      if (prevState[squareRow]) {
+        if (prevState[squareRow][squareColumn]) {
+          return newState;
+        }
+        prevState[squareRow][squareColumn] = true;
+        return newState;
+      }
+      newState[squareRow] = { [squareColumn]: true };
+      return newState;
+    });
   };
+
+  // Rest of the code remains the same
   const handleSquareDoubleClick = () => {
     /*
     An open square is shortcut eligible if the count of mines adjacent to the square is exactly equal to the number of flags touching the square.
@@ -92,23 +125,19 @@ const Board: FC = () => {
     */
   };
 
-  const tempClick = ()=>{
-    console.log(JSON.stringify(squaresState))
-    setSquaresState((prevState) => ({ ...prevState, 4: { 5: true } }));
-    setSquaresState((prevState) => ({ ...prevState, 5: { 6: true } }));
-    console.log(JSON.stringify(squaresState))
-  }
-
   return (
     <div>
+      <UserSettings
+        handleClick={handleSetMineCount}
+        numberOfMinesOnBoard={numberOfMinesOnBoard}
+      />
       <Gameboard
+        gameboardOpenSquareLocations={gameboardOpenSquareLocations}
         handleClick={handleSquareMainClick}
         isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
         numberOfRowsOnBoard={numberOfRowsOnBoard}
         numberOfSquaresOnEachRow={numberOfSquaresOnEachRow}
-        squaresState={squaresState}
-        tempClick={tempClick}
       />
     </div>
   );

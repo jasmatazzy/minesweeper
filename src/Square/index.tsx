@@ -2,50 +2,42 @@ import React, { FC } from "react";
 import "./style.css";
 interface SquareProps {
   handleClick: () => void;
-  isAMineSquare: boolean;
+  isMine: boolean;
   isFlagged: boolean;
+  isGameStarted: boolean;
   isSquareOpen: boolean;
   numberOfAdjacentMines: number | 0;
-  squaresState: {};
-  optionalText?: string | void
+  optionalText?: string | void;
 }
 const Square: FC<SquareProps> = (props) => {
   const {
     handleClick,
-    isAMineSquare,
+    isMine,
     isFlagged,
-    isSquareOpen, 
+    isGameStarted,
+    isSquareOpen,
     numberOfAdjacentMines,
-    optionalText,
-    squaresState
   } = props;
 
   return (
-    <div
+    <button
+      onClick={handleClick}
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        boxSizing: "border-box",
+        backgroundColor: isSquareOpen ? "lightGray" : "gray",
       }}
+      disabled={isFlagged ? true : false}
     >
-      <button
-        onClick={handleClick}
-        style={{
-          backgroundColor: isSquareOpen ? "lightGray" : "gray",
-        }}
-        disabled={isFlagged ? true : false}
-      >
-        {/* {isSquareOpen && isAMineSquare ? `💣`
-        : isSquareOpen && numberOfAdjacentMines > 0 ? numberOfAdjacentMines
-        : isFlagged ? `🚩`
-        : isSquareOpen && numberOfAdjacentMines === 0 ? `🌴` : " "
-        } */}
-        {isSquareOpen ? `true` : `nah`}
-        {/* {JSON.stringify(optionalText)} */}
-        {<br />}
-      </button>
-    </div>
+      {isGameStarted &&
+        (isSquareOpen && isMine
+          ? `💣`
+          : isSquareOpen && numberOfAdjacentMines > 0
+          ? numberOfAdjacentMines
+          : isFlagged
+          ? `🚩`
+          : isSquareOpen && numberOfAdjacentMines === 0
+          ? `🌴`
+          : " ")}
+    </button>
   );
 };
 
