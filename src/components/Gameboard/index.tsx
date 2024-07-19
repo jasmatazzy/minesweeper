@@ -1,24 +1,32 @@
-import React, {useEffect } from "react";
+import React, { useEffect } from "react";
 import Row from "../Row";
 import Square from "../../Square";
 // import LookUpTable from "../Board";
 
 interface GameboardProps {
+  gameboardMineSquareLocations: {
+    [row: number]: { [column: number]: boolean };
+  };
   gameboardOpenSquareLocations: {
     [row: number]: { [column: number]: boolean };
   };
   handleClick: (row: number, column: number) => void;
   isGameStarted: boolean;
   numberOfMinesOnBoard: number;
+  numberOfNeighborsWhoAreMines: {
+    [row: number]: { [column: number]: number };
+  };
   numberOfRowsOnBoard: number;
   numberOfSquaresOnEachRow: number;
 }
 
-const Gameboard = (props:GameboardProps): JSX.Element => {
+const Gameboard = (props: GameboardProps): JSX.Element => {
   const {
+    gameboardMineSquareLocations,
     gameboardOpenSquareLocations,
     handleClick,
     isGameStarted,
+    numberOfNeighborsWhoAreMines,
     numberOfRowsOnBoard,
     numberOfSquaresOnEachRow,
   } = props;
@@ -46,13 +54,24 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                 key={columnIndex}
                 handleClick={() => handleClick(rowIndex, columnIndex)}
                 isGameStarted={isGameStarted}
-                isSquareOpen={
-                  gameboardOpenSquareLocations[rowIndex] &&
-                  gameboardOpenSquareLocations[rowIndex][columnIndex]
-                }
+                isSquareOpen={true}
+                // isSquareOpen={
+                //   gameboardOpenSquareLocations[rowIndex] &&
+                //   gameboardOpenSquareLocations[rowIndex][columnIndex]
+                // }
                 isFlagged={false}
-                isMine={false}
-                numberOfAdjacentMines={0}
+                isMine={
+                  gameboardMineSquareLocations[rowIndex] &&
+                  gameboardMineSquareLocations[rowIndex][columnIndex]
+                }
+                numberOfNeighborsWhoAreMines={
+                  numberOfNeighborsWhoAreMines[rowIndex] &&
+                    numberOfNeighborsWhoAreMines[rowIndex][columnIndex]
+                    ? numberOfNeighborsWhoAreMines[rowIndex][columnIndex]
+                    : 0
+                }
+                optionalText={JSON.stringify(gameboardMineSquareLocations[rowIndex] &&
+                  gameboardMineSquareLocations[rowIndex][columnIndex])}
               />
             )
           )}
