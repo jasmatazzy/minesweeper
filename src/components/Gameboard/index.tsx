@@ -54,7 +54,7 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                 key={columnIndex}
                 handleClick={() => handleClick(rowIndex, columnIndex)}
                 isGameStarted={isGameStarted}
-                isSquareOpen={true}
+                isSquareOpen={gameboardOpenSquareLocations[rowIndex] && gameboardOpenSquareLocations[rowIndex][columnIndex]}
                 // isSquareOpen={
                 //   gameboardOpenSquareLocations[rowIndex] &&
                 //   gameboardOpenSquareLocations[rowIndex][columnIndex]
