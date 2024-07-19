@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Gameboard from "../Gameboard/";
 import UserSettings from "../UserSettings";
+import squareNeighborLookup from "../../functions/squareNeighborLookup";
 
 interface BoardProps {}
 
@@ -12,12 +13,14 @@ type LookUpTable = {
 
 const Board = (props: BoardProps): JSX.Element => {
   /* STATE SETTERS for GameboardComponent*/
-  const [isGameStarted, setIsGameStarted] = useState(true);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(true);
   const [isGameWon, setIsGameWon] = useState(true);
   const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(16);
   const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(16);
   const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(40);
+  const [numberOfNeighborsWhoAreMines, setNumberOfNeighborsWhoAreMines] =
+    useState<{ [row: number]: { [column: number]: number } }>({});
   const [gameboardMineSquareLocations, setGameboardMineSquareLocations] =
     useState({});
   const [gameboardOpenSquareLocations, setGameboardOpenSquareLocations] =
@@ -62,26 +65,61 @@ const Board = (props: BoardProps): JSX.Element => {
   };
 
   const handleGameStarted = () => {
-    console.log(`the game has begun`);
-    const buryTheMines = (): { [row: number]: { [column: number]: true } } => {
-      const mineLocations: { [row: number]: { [column: number]: true } } = {};
+    //distribute mines at random throughout the board & notify all neighbors that a new mine has moved into the neighborhood
+    const buryTheMinesAndNotifyNewNeighbors = (): {
+      [row: number]: { [column: number]: true };
+    } => {
+      const mineLocationsObject: { [row: number]: { [column: number]: true } } =
+        {};
+      const mineLocationsArray: { row: number; column: number }[] = [];
       Array.from({ length: numberOfMinesOnBoard }).forEach(() => {
         const randomRow = Math.floor(Math.random() * numberOfRowsOnBoard);
-        const randomColumn = Math.floor(Math.random() * numberOfSquaresOnEachRow);
+        const randomColumn = Math.floor(
+          Math.random() * numberOfSquaresOnEachRow
+        );
         const isMineAlreadyBuried =
-          mineLocations[randomRow] && mineLocations[randomRow][randomColumn];
+          mineLocationsObject[randomRow] &&
+          mineLocationsObject[randomRow][randomColumn];
         if (!isMineAlreadyBuried) {
-          if (!mineLocations[randomRow]) {
-            mineLocations[randomRow] = {};
+          if (!mineLocationsObject[randomRow]) {
+            mineLocationsObject[randomRow] = {};
           }
-          mineLocations[randomRow][randomColumn] = true;
+          mineLocationsObject[randomRow][randomColumn] = true;
+          mineLocationsArray.push({ row: randomRow, column: randomColumn });
         }
       });
-      console.log(`gameboard minesquare locations ${JSON.stringify(gameboardMineSquareLocations, null, 2)}`)
-      setGameboardMineSquareLocations(mineLocations)
+      setGameboardMineSquareLocations(mineLocationsObject);
+      mineLocationsArray.forEach((mineLocation) => {
+        const { row, column } = mineLocation;
+        const neighborsOfMines = squareNeighborLookup(
+          row,
+          column,
+          numberOfRowsOnBoard,
+          numberOfSquaresOnEachRow
+        );
+        neighborsOfMines.forEach((neighbor) => {
+          const { row, column } = neighbor;
+          setNumberOfNeighborsWhoAreMines((prevState) => {
+            const newState = { ...prevState };
+            if (prevState[row]) {
+              if (prevState[row][column]) {
+                newState[row][column] += 1;
+                return newState;
+              }
+              newState[row][column] = 1;
+              return newState;
+            }
+            newState[row] = { [column]: 1 };
+            return newState;
+          });
+        });
+      });
       return gameboardMineSquareLocations;
     };
-    buryTheMines();
+
+    setIsGameStarted(true);
+    buryTheMinesAndNotifyNewNeighbors();
+
     /* When the user clicks to start the game:
     ***gameboardMineSquareLocations
     - openNeighbors = open all neighbors, looping over any who also have 0 mine neighbors;
@@ -151,10 +189,12 @@ const Board = (props: BoardProps): JSX.Element => {
         numberOfMinesOnBoard={numberOfMinesOnBoard}
       />
       <Gameboard
+        gameboardMineSquareLocations={gameboardMineSquareLocations}
         gameboardOpenSquareLocations={gameboardOpenSquareLocations}
         handleClick={handleSquareMainClick}
         isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
+        numberOfNeighborsWhoAreMines={numberOfNeighborsWhoAreMines}
         numberOfRowsOnBoard={numberOfRowsOnBoard}
         numberOfSquaresOnEachRow={numberOfSquaresOnEachRow}
       />

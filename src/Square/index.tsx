@@ -6,7 +6,7 @@ interface SquareProps {
   isFlagged: boolean;
   isGameStarted: boolean;
   isSquareOpen: boolean;
-  numberOfAdjacentMines: number | 0;
+  numberOfNeighborsWhoAreMines: number | 0;
   optionalText?: string | void;
 }
 const Square: FC<SquareProps> = (props) => {
@@ -16,9 +16,9 @@ const Square: FC<SquareProps> = (props) => {
     isFlagged,
     isGameStarted,
     isSquareOpen,
-    numberOfAdjacentMines,
+    optionalText,
+    numberOfNeighborsWhoAreMines,
   } = props;
-
   return (
     <button
       onClick={handleClick}
@@ -30,12 +30,12 @@ const Square: FC<SquareProps> = (props) => {
       {isGameStarted &&
         (isSquareOpen && isMine
           ? `💣`
-          : isSquareOpen && numberOfAdjacentMines > 0
-          ? numberOfAdjacentMines
+          : isSquareOpen && numberOfNeighborsWhoAreMines > 0
+          ? numberOfNeighborsWhoAreMines
           : isFlagged
           ? `🚩`
-          : isSquareOpen && numberOfAdjacentMines === 0
-          ? `🌴`
+          : isSquareOpen && numberOfNeighborsWhoAreMines === 0
+          ? " "
           : " ")}
     </button>
   );
