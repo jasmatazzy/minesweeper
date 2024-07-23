@@ -24,18 +24,17 @@ const Board = (props: BoardProps): JSX.Element => {
   const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(40);
   const [numberOfNeighborsWhoAreMines, setNumberOfNeighborsWhoAreMines] =
     useState<{ [row: number]: { [column: number]: number } }>({});
-  const [numberOfNeighborsWhoAreFlags, setNumberOfNeighborsWhoAreFlags] =
-    useState<{ [row: number]: { [column: number]: number } }>({});
   const [gameboardFlagSquareLocations, setGameboardFlagSquareLocations] =
     useState<{ [row: number]: { [column: number]: true } }>({});
   const [gameboardMineSquareLocations, setGameboardMineSquareLocations] =
     useState<{ [row: number]: { [column: number]: true } }>({});
   const [gameboardOpenSquareLocations, setGameboardOpenSquareLocations] =
     useState<LookUpTable>({});
-  const [
-    gameboardNeighborSquareLocations,
-    setGameboardNeighborSquareLocations,
-  ] = useState<{ [row: number]: { [column: number]: true } }>({});
+  // const [
+  //   gameboardNeighborSquareLocations,
+  //   setGameboardNeighborSquareLocations,
+  // ] = useState<{ [row: number]: { [column: number]: true } }>({});
+
   /* STATE SETTERS for user inputs*/
 
   /*DERIVED STATE */
@@ -60,6 +59,29 @@ const Board = (props: BoardProps): JSX.Element => {
     )
       return false;
     else return true;
+  };
+
+  const numberOfNeighborsWhoAreFlags = (
+    squareRow: number,
+    squareColumn: number
+  ) => {
+    let counter = 0;
+    const neighbors = squareNeighborLookup(
+      squareRow,
+      squareColumn,
+      numberOfRowsOnBoard,
+      numberOfSquaresOnEachRow
+    );
+    // if neighbor is flag, increase counter
+    neighbors.forEach((neighbor) => {
+      if (
+        gameboardFlagSquareLocations[neighbor.row] &&
+        gameboardFlagSquareLocations[neighbor.row][neighbor.column]
+      ) {
+        counter += 1;
+      }
+    });
+    return counter;
   };
 
   /* EVENT HANDLERS */
@@ -244,19 +266,20 @@ const Board = (props: BoardProps): JSX.Element => {
       console.log(`womp womp womp maybe next time`);
       const restOfMines = { ...gameboardOpenSquareLocations };
 
-      const stageMinesForFinalReveal = () => Object.getOwnPropertyNames(
-        gameboardMineSquareLocations
-      ).forEach((row) => {
-        Object.getOwnPropertyNames(
-          gameboardMineSquareLocations[parseInt(row, 10)]
-        ).forEach((column) => {
-          addToLookupTable(
-            parseInt(row, 10),
-            parseInt(column, 10),
-            restOfMines
-          );
-        });
-      });
+      const stageMinesForFinalReveal = () =>
+        Object.getOwnPropertyNames(gameboardMineSquareLocations).forEach(
+          (row) => {
+            Object.getOwnPropertyNames(
+              gameboardMineSquareLocations[parseInt(row, 10)]
+            ).forEach((column) => {
+              addToLookupTable(
+                parseInt(row, 10),
+                parseInt(column, 10),
+                restOfMines
+              );
+            });
+          }
+        );
 
       stageMinesForFinalReveal();
       setGameboardOpenSquareLocations((prevState) => ({
@@ -288,7 +311,27 @@ const Board = (props: BoardProps): JSX.Element => {
     }
   };
 
-  const handleSquareDoubleClick = () => {
+  const handleSquareDoubleClick = (squareRow: number, squareColumn: number) => {
+    const neighbors = squareNeighborLookup(
+      squareRow,
+      squareColumn,
+      numberOfRowsOnBoard,
+      numberOfSquaresOnEachRow
+    );
+    console.log(`doubleclicked`);
+    if (
+      (gameboardFlagSquareLocations[squareRow] &&
+        gameboardFlagSquareLocations[squareRow][squareColumn]) ||
+      isGameOver
+    )
+      return;
+    if (
+      (numberOfNeighborsWhoAreMines[squareRow] &&
+      numberOfNeighborsWhoAreMines[squareRow][squareColumn] ===
+        numberOfNeighborsWhoAreFlags(squareRow, squareColumn))  
+    ) {
+      neighbors.forEach((neighbor)=> handleSquareMainClick(neighbor.row, neighbor.column))
+    }
     /*
     An open square is shortcut eligible if the count of mines adjacent to the square is exactly equal to the number of flags touching the square.
     
@@ -308,7 +351,7 @@ const Board = (props: BoardProps): JSX.Element => {
     right click toggle, un-highlight the square's neighbors on mouseup;
     */
     event.preventDefault();
-    const updatedState = { ...gameboardFlagSquareLocations };
+    const updatedStateOfFlagLocations = { ...gameboardFlagSquareLocations };
     if (
       (gameboardOpenSquareLocations[squareRow] &&
         gameboardOpenSquareLocations[squareRow][squareColumn]) ||
@@ -319,11 +362,13 @@ const Board = (props: BoardProps): JSX.Element => {
       gameboardFlagSquareLocations[squareRow] &&
       gameboardFlagSquareLocations[squareRow][squareColumn]
     ) {
-      delete updatedState[squareRow][squareColumn];
-    } else addToLookupTable(squareRow, squareColumn, updatedState);
+      delete updatedStateOfFlagLocations[squareRow][squareColumn];
+    } else {
+      addToLookupTable(squareRow, squareColumn, updatedStateOfFlagLocations);
+    }
     return setGameboardFlagSquareLocations((prevState) => ({
       ...prevState,
-      ...updatedState,
+      ...updatedStateOfFlagLocations,
     }));
   };
 
@@ -339,10 +384,12 @@ const Board = (props: BoardProps): JSX.Element => {
         gameboardMineSquareLocations={gameboardMineSquareLocations}
         gameboardOpenSquareLocations={gameboardOpenSquareLocations}
         handleMainClick={handleSquareMainClick}
+        handleSquareDoubleClick={handleSquareDoubleClick}
         handleSquareRightClick={handleSquareRightClick}
         isGameOver={isGameOver}
         isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
+        numberOfNeighborsWhoAreFlags={numberOfNeighborsWhoAreFlags}
         numberOfNeighborsWhoAreMines={numberOfNeighborsWhoAreMines}
         numberOfRowsOnBoard={numberOfRowsOnBoard}
         numberOfSquaresOnEachRow={numberOfSquaresOnEachRow}

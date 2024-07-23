@@ -14,10 +14,16 @@ interface GameboardProps {
     [row: number]: { [column: number]: boolean };
   };
   handleMainClick: (row: number, column: number) => void;
-  handleSquareRightClick: (event: React.MouseEvent<HTMLElement>, row: number, column: number) => void;
+  handleSquareDoubleClick: (row: number, column: number) => void;
+  handleSquareRightClick: (
+    event: React.MouseEvent<HTMLElement>,
+    row: number,
+    column: number
+  ) => void;
   isGameOver: boolean;
   isGameStarted: boolean;
   numberOfMinesOnBoard: number;
+  numberOfNeighborsWhoAreFlags: (row: number, column: number) => number;
   numberOfNeighborsWhoAreMines: {
     [row: number]: { [column: number]: number };
   };
@@ -30,10 +36,12 @@ const Gameboard = (props: GameboardProps): JSX.Element => {
     gameboardFlagSquareLocations,
     gameboardMineSquareLocations,
     gameboardOpenSquareLocations,
+    handleSquareDoubleClick,
     handleMainClick,
     handleSquareRightClick,
     isGameOver,
     isGameStarted,
+    numberOfNeighborsWhoAreFlags,
     numberOfNeighborsWhoAreMines,
     numberOfRowsOnBoard,
     numberOfSquaresOnEachRow,
@@ -65,7 +73,12 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
               <Square
                 key={columnIndex}
                 handleMainClick={() => handleMainClick(rowIndex, columnIndex)}
-                handleSquareRightClick={(event: React.MouseEvent<HTMLElement>) => handleSquareRightClick(event, rowIndex, columnIndex)}
+                handleSquareDoubleClick={() =>
+                  handleSquareDoubleClick(rowIndex, columnIndex)
+                }
+                handleSquareRightClick={(
+                  event: React.MouseEvent<HTMLElement>
+                ) => handleSquareRightClick(event, rowIndex, columnIndex)}
                 isGameStarted={isGameStarted}
                 isGameOver={isGameOver}
                 isMine={
@@ -73,7 +86,6 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                     gameboardMineSquareLocations[rowIndex][columnIndex]) ??
                   false
                 }
-                // isSquareOpen={true}
                 isSquareOpen={
                   (gameboardOpenSquareLocations[rowIndex] &&
                     gameboardOpenSquareLocations[rowIndex][columnIndex]) ??
@@ -90,7 +102,7 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                     ? numberOfNeighborsWhoAreMines[rowIndex][columnIndex]
                     : 0
                 }
-                optionalText={JSON.stringify(`${rowIndex}, ${columnIndex}`)}
+                // optionalText={JSON.stringify(`${numberOfNeighborsWhoAreFlags(rowIndex, columnIndex)}`)}
               />
             )
           )}
