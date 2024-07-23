@@ -11,6 +11,7 @@ interface GameboardProps {
     [row: number]: { [column: number]: boolean };
   };
   handleClick: (row: number, column: number) => void;
+  isGameOver: boolean;
   isGameStarted: boolean;
   numberOfMinesOnBoard: number;
   numberOfNeighborsWhoAreMines: {
@@ -25,6 +26,7 @@ const Gameboard = (props: GameboardProps): JSX.Element => {
     gameboardMineSquareLocations,
     gameboardOpenSquareLocations,
     handleClick,
+    isGameOver,
     isGameStarted,
     numberOfNeighborsWhoAreMines,
     numberOfRowsOnBoard,
@@ -41,7 +43,11 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
   //   return false;
   // };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (isGameOver) {
+      console.log(`game over`);
+    }
+  }, [isGameOver]);
 
   return (
     <div>
@@ -54,24 +60,25 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                 key={columnIndex}
                 handleClick={() => handleClick(rowIndex, columnIndex)}
                 isGameStarted={isGameStarted}
-                isSquareOpen={gameboardOpenSquareLocations[rowIndex] && gameboardOpenSquareLocations[rowIndex][columnIndex]}
-                // isSquareOpen={
-                //   gameboardOpenSquareLocations[rowIndex] &&
-                //   gameboardOpenSquareLocations[rowIndex][columnIndex]
-                // }
-                isFlagged={false}
                 isMine={
-                  gameboardMineSquareLocations[rowIndex] &&
-                  gameboardMineSquareLocations[rowIndex][columnIndex]
+                  (gameboardMineSquareLocations[rowIndex] &&
+                    gameboardMineSquareLocations[rowIndex][columnIndex]) ??
+                  false
                 }
+                // isSquareOpen={true}
+                isSquareOpen={
+                  (gameboardOpenSquareLocations[rowIndex] &&
+                    gameboardOpenSquareLocations[rowIndex][columnIndex]) ??
+                  false
+                }
+                isFlagged={false}
                 numberOfNeighborsWhoAreMines={
                   numberOfNeighborsWhoAreMines[rowIndex] &&
-                    numberOfNeighborsWhoAreMines[rowIndex][columnIndex]
+                  numberOfNeighborsWhoAreMines[rowIndex][columnIndex]
                     ? numberOfNeighborsWhoAreMines[rowIndex][columnIndex]
                     : 0
                 }
-                optionalText={JSON.stringify(gameboardMineSquareLocations[rowIndex] &&
-                  gameboardMineSquareLocations[rowIndex][columnIndex])}
+                optionalText={JSON.stringify(`${rowIndex}, ${columnIndex}`)}
               />
             )
           )}
