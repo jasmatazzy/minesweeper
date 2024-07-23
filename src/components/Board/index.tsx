@@ -1,3 +1,6 @@
+//You will create a function who receives an array— this array is a report of neighbors who have no mine neighbors
+// function opens each square in list and also receives data about these secondary neighbors, and so on, until no one reports that they have a neighbor with no mine neighbors
+
 import React, { useState } from "react";
 import Gameboard from "../Gameboard/";
 import UserSettings from "../UserSettings";
@@ -7,14 +10,14 @@ interface BoardProps {}
 
 type LookUpTable = {
   [row: number]: {
-    [column: number]: boolean;
+    [column: number]: true;
   };
 };
 
 const Board = (props: BoardProps): JSX.Element => {
   /* STATE SETTERS for GameboardComponent*/
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(true);
+  const [isGameOver, setIsGameOver] = useState(false);
   const [isGameWon, setIsGameWon] = useState(true);
   const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(16);
   const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(16);
@@ -22,14 +25,38 @@ const Board = (props: BoardProps): JSX.Element => {
   const [numberOfNeighborsWhoAreMines, setNumberOfNeighborsWhoAreMines] =
     useState<{ [row: number]: { [column: number]: number } }>({});
   const [gameboardMineSquareLocations, setGameboardMineSquareLocations] =
-    useState({});
+    useState<{ [row: number]: { [column: number]: true } }>({});
   const [gameboardOpenSquareLocations, setGameboardOpenSquareLocations] =
     useState<LookUpTable>({});
   const [
     gameboardNeighborSquareLocations,
     setGameboardNeighborSquareLocations,
-  ] = useState({});
+  ] = useState<{ [row: number]: { [column: number]: true } }>({});
   /* STATE SETTERS for user inputs*/
+
+  /*DERIVED STATE */
+
+  const coordinatesExistInLookupTable = (
+    row: number,
+    column: number,
+    table: LookUpTable
+  ) => {
+    if (table[row] && table[row][column]) return true;
+    return false;
+  };
+
+  const isSquareAMine = (row: number, column: number) =>
+    coordinatesExistInLookupTable(row, column, gameboardMineSquareLocations);
+
+  const isSquareSafe = (squareRow: number, squareColumn: number): boolean => {
+    if (
+      (numberOfNeighborsWhoAreMines[squareRow] &&
+        numberOfNeighborsWhoAreMines[squareRow][squareColumn]) ||
+      isSquareAMine(squareRow, squareColumn)
+    )
+      return false;
+    else return true;
+  };
 
   /* EVENT HANDLERS */
   const handleSetRowLength = () => {
@@ -117,8 +144,8 @@ const Board = (props: BoardProps): JSX.Element => {
       return gameboardMineSquareLocations;
     };
 
-    setIsGameStarted(true);
     buryTheMinesAndNotifyNewNeighbors();
+    setIsGameStarted(true);
 
     /* When the user clicks to start the game:
     ***gameboardMineSquareLocations
@@ -133,6 +160,8 @@ const Board = (props: BoardProps): JSX.Element => {
     - openNeighbors
       */
   };
+
+  const tempState: LookUpTable = { ...gameboardOpenSquareLocations };
   const handleSquareMainClick = (squareRow: number, squareColumn: number) => {
     /*
      Animate the smiley face. If game is not started, handleGameStarted; if square is already open,
@@ -149,21 +178,77 @@ const Board = (props: BoardProps): JSX.Element => {
     if gameboardOpenSquareLocations has this number of entries, the game must be won— all remaining squares, whether flagged or not, are mines
     */
 
-    setGameboardOpenSquareLocations((prevState) => {
-      const newState = { ...prevState };
-      if (prevState[squareRow]) {
-        if (prevState[squareRow][squareColumn]) {
-          return newState;
-        }
-        prevState[squareRow][squareColumn] = true;
-        return newState;
+    /*
+        create empty array called Collection of row/column objects
+        add clicked square coordinates to array
+        if square has mine neighbors, push this ...array to the gameboardOpenSquareLocations state, return with no further action
+        if square has no mine neighbors
+        - identify all its neighbors
+        - push these identities to the Collection, they are safe to open
+        --check each identity for whether they have mine neighbors
+        --if the neighborneighbor has a mine neighbor, return the Collection and take no further action
+        ---if not, run the function on neighborneighbors who had no mine neighbors
+
+        */
+
+    if (
+      (tempState[squareRow] && tempState[squareRow][squareColumn]) ||
+      (gameboardOpenSquareLocations[squareRow] &&
+        gameboardOpenSquareLocations[squareRow][squareColumn])
+    )
+      return;
+
+    const addToTable = (row: number, column: number, table: LookUpTable) => {
+      if (table[row] && table[row][column]) {
+        return;
       }
-      newState[squareRow] = { [squareColumn]: true };
-      return newState;
-    });
+      if (!table[row]) {
+        table[row] = {};
+      }
+      table[row][column] = true;
+    };
+
+    const neighbors = (
+      row: number,
+      column: number
+    ): { row: number; column: number }[] =>
+      squareNeighborLookup(
+        row,
+        column,
+        numberOfRowsOnBoard,
+        numberOfSquaresOnEachRow
+      );
+
+    const unopenedNeighbors = neighbors(squareRow, squareColumn).filter(
+      (neighbor) =>
+        (tempState[neighbor.row] &&
+          tempState[neighbor.row][neighbor.column]) !== true
+    );
+
+    addToTable(squareRow, squareColumn, tempState);
+
+    if (!unopenedNeighbors || !isSquareSafe(squareRow, squareColumn)) {
+      return setGameboardOpenSquareLocations((prevState) => ({
+        ...prevState,
+        ...tempState,
+      }));
+    } else {
+      unopenedNeighbors.forEach((neighbor) => {
+        if (
+          tempState[neighbor.row] &&
+          tempState[neighbor.row][neighbor.column]
+        ) {
+          return;
+        }
+        handleSquareMainClick(neighbor.row, neighbor.column);
+      });
+      return setGameboardOpenSquareLocations((prevState) => ({
+        ...prevState,
+        ...tempState,
+      }));
+    }
   };
 
-  // Rest of the code remains the same
   const handleSquareDoubleClick = () => {
     /*
     An open square is shortcut eligible if the count of mines adjacent to the square is exactly equal to the number of flags touching the square.
@@ -192,6 +277,7 @@ const Board = (props: BoardProps): JSX.Element => {
         gameboardMineSquareLocations={gameboardMineSquareLocations}
         gameboardOpenSquareLocations={gameboardOpenSquareLocations}
         handleClick={handleSquareMainClick}
+        isGameOver={isGameOver}
         isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
         numberOfNeighborsWhoAreMines={numberOfNeighborsWhoAreMines}
