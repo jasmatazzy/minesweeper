@@ -7,7 +7,7 @@ interface SquareProps {
   isGameStarted: boolean;
   isSquareOpen: boolean;
   numberOfNeighborsWhoAreMines: number | 0;
-  optionalText?: string | void;
+  optionalText?: string;
 }
 const Square: FC<SquareProps> = (props) => {
   const {
@@ -25,7 +25,7 @@ const Square: FC<SquareProps> = (props) => {
       style={{
         backgroundColor: isSquareOpen ? "lightGray" : "gray",
       }}
-      disabled={isFlagged ? true : false}
+      disabled={(isFlagged || !isGameStarted) ? true : false}
     >
       {isGameStarted &&
         (isSquareOpen && isMine
@@ -37,6 +37,7 @@ const Square: FC<SquareProps> = (props) => {
           : isSquareOpen && numberOfNeighborsWhoAreMines === 0
           ? " "
           : " ")}
+          {isSquareOpen && !isMine && !numberOfNeighborsWhoAreMines && optionalText}
     </button>
   );
 };
