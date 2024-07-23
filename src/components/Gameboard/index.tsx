@@ -60,6 +60,7 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                 key={columnIndex}
                 handleClick={() => handleClick(rowIndex, columnIndex)}
                 isGameStarted={isGameStarted}
+                isGameOver={isGameOver}
                 isMine={
                   (gameboardMineSquareLocations[rowIndex] &&
                     gameboardMineSquareLocations[rowIndex][columnIndex]) ??

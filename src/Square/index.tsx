@@ -5,6 +5,7 @@ interface SquareProps {
   isMine: boolean;
   isFlagged: boolean;
   isGameStarted: boolean;
+  isGameOver: boolean;
   isSquareOpen: boolean;
   numberOfNeighborsWhoAreMines: number | 0;
   optionalText?: string;
@@ -14,6 +15,7 @@ const Square: FC<SquareProps> = (props) => {
     handleClick,
     isMine,
     isFlagged,
+    isGameOver,
     isGameStarted,
     isSquareOpen,
     optionalText,
@@ -25,7 +27,7 @@ const Square: FC<SquareProps> = (props) => {
       style={{
         backgroundColor: isSquareOpen ? "lightGray" : "gray",
       }}
-      disabled={(isFlagged || !isGameStarted) ? true : false}
+      disabled={(isFlagged || isGameOver)}
     >
       {isGameStarted &&
         (isSquareOpen && isMine

@@ -116,6 +116,7 @@ const Board = (props: BoardProps): JSX.Element => {
         }
       });
       setGameboardMineSquareLocations(mineLocationsObject);
+
       mineLocationsArray.forEach((mineLocation) => {
         const { row, column } = mineLocation;
         const neighborsOfMines = squareNeighborLookup(
@@ -226,6 +227,11 @@ const Board = (props: BoardProps): JSX.Element => {
     );
 
     addToTable(squareRow, squareColumn, tempState);
+
+    if(isSquareAMine(squareRow, squareColumn)) {
+      console.log(`womp womp womp maybe next time`)
+      setIsGameOver(true);
+    }
 
     if (!unopenedNeighbors || !isSquareSafe(squareRow, squareColumn)) {
       return setGameboardOpenSquareLocations((prevState) => ({
