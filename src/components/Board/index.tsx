@@ -19,9 +19,9 @@ const Board = (props: BoardProps): JSX.Element => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isGameWon, setIsGameWon] = useState(true);
-  const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(9);
-  const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(9);
-  const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(15);
+  const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(16);
+  const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(16);
+  const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(40);
   const [numberOfNeighborsWhoAreMines, setNumberOfNeighborsWhoAreMines] =
     useState<{ [row: number]: { [column: number]: number } }>({});
   const [gameboardFlagSquareLocations, setGameboardFlagSquareLocations] =
