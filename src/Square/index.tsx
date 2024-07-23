@@ -35,7 +35,7 @@ const Square: FC<SquareProps> = (props) => {
       }}
     >
       {isGameStarted &&
-        (isGameOver && isFlagged && !isMine ? `😩🚫` : isSquareOpen && isMine
+        (isGameOver && isFlagged && !isMine ? `😩🚫` : isGameOver && isFlagged && isMine ? `✅💣` : isSquareOpen && isMine
           ? `💣`
           : isSquareOpen && numberOfNeighborsWhoAreMines > 0
           ? numberOfNeighborsWhoAreMines

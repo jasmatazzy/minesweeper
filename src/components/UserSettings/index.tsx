@@ -5,10 +5,12 @@ interface UserSettingsProps {
   getMineCount: () => void;
   numberOfMinesOnBoard: number;
   startGame: () => void;
+  isGameStarted: boolean;
 }
 
 const UserSettings = (props: UserSettingsProps): JSX.Element => {
-  const { getMineCount, numberOfMinesOnBoard, startGame } = props;
+  const { getMineCount, isGameStarted, numberOfMinesOnBoard, startGame } =
+    props;
   return (
     <form
       style={{
@@ -37,9 +39,9 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
           src={startGameIcon}
           type="image"
           width="48"
-          onClick={(event)=>{
+          onClick={(event) => {
             event.preventDefault();
-            startGame();
+            !isGameStarted && startGame();
           }}
         ></input>
       </div>

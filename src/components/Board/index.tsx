@@ -19,9 +19,9 @@ const Board = (props: BoardProps): JSX.Element => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isGameWon, setIsGameWon] = useState(true);
-  const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(16);
-  const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(16);
-  const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(40);
+  const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(9);
+  const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(9);
+  const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(15);
   const [numberOfNeighborsWhoAreMines, setNumberOfNeighborsWhoAreMines] =
     useState<{ [row: number]: { [column: number]: number } }>({});
   const [gameboardFlagSquareLocations, setGameboardFlagSquareLocations] =
@@ -242,7 +242,10 @@ const Board = (props: BoardProps): JSX.Element => {
       isGameOver
     )
       return;
-
+    if (!isGameStarted) {
+      alert(`🚧 work in progress. Hit the Banksy to begin.`);
+      return;
+    }
     const neighbors = (
       row: number,
       column: number
@@ -326,11 +329,13 @@ const Board = (props: BoardProps): JSX.Element => {
     )
       return;
     if (
-      (numberOfNeighborsWhoAreMines[squareRow] &&
+      numberOfNeighborsWhoAreMines[squareRow] &&
       numberOfNeighborsWhoAreMines[squareRow][squareColumn] ===
-        numberOfNeighborsWhoAreFlags(squareRow, squareColumn))  
+        numberOfNeighborsWhoAreFlags(squareRow, squareColumn)
     ) {
-      neighbors.forEach((neighbor)=> handleSquareMainClick(neighbor.row, neighbor.column))
+      neighbors.forEach((neighbor) =>
+        handleSquareMainClick(neighbor.row, neighbor.column)
+      );
     }
     /*
     An open square is shortcut eligible if the count of mines adjacent to the square is exactly equal to the number of flags touching the square.
@@ -376,8 +381,9 @@ const Board = (props: BoardProps): JSX.Element => {
     <div>
       <UserSettings
         getMineCount={handleSetMineCount}
-        startGame={handleGameStarted}
+        isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
+        startGame={handleGameStarted}
       />
       <Gameboard
         gameboardFlagSquareLocations={gameboardFlagSquareLocations}
