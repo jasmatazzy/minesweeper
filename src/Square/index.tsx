@@ -1,7 +1,8 @@
 import React, { FC } from "react";
 import "./style.css";
 interface SquareProps {
-  handleClick: () => void;
+  handleMainClick: () => void;
+  handleSquareRightClick: (event: React.MouseEvent<HTMLElement>) => void;
   isMine: boolean;
   isFlagged: boolean;
   isGameStarted: boolean;
@@ -12,25 +13,26 @@ interface SquareProps {
 }
 const Square: FC<SquareProps> = (props) => {
   const {
-    handleClick,
+    handleMainClick,
+    handleSquareRightClick,
     isMine,
     isFlagged,
     isGameOver,
     isGameStarted,
     isSquareOpen,
-    optionalText,
+    // optionalText,
     numberOfNeighborsWhoAreMines,
   } = props;
   return (
     <button
-      onClick={handleClick}
+      onClick={handleMainClick}
+      onContextMenu={handleSquareRightClick}
       style={{
-        backgroundColor: isSquareOpen ? "lightGray" : "gray",
+        backgroundColor: isSquareOpen || isFlagged ? "lightGray" : "gray",
       }}
-      disabled={(isFlagged || isGameOver)}
     >
       {isGameStarted &&
-        (isSquareOpen && isMine
+        (isGameOver && isFlagged && !isMine ? `😩🚫` : isSquareOpen && isMine
           ? `💣`
           : isSquareOpen && numberOfNeighborsWhoAreMines > 0
           ? numberOfNeighborsWhoAreMines
@@ -39,7 +41,6 @@ const Square: FC<SquareProps> = (props) => {
           : isSquareOpen && numberOfNeighborsWhoAreMines === 0
           ? " "
           : " ")}
-          {isSquareOpen && !isMine && !numberOfNeighborsWhoAreMines && optionalText}
     </button>
   );
 };

@@ -4,13 +4,17 @@ import Square from "../../Square";
 // import LookUpTable from "../Board";
 
 interface GameboardProps {
+  gameboardFlagSquareLocations: {
+    [row: number]: { [column: number]: boolean };
+  };
   gameboardMineSquareLocations: {
     [row: number]: { [column: number]: boolean };
   };
   gameboardOpenSquareLocations: {
     [row: number]: { [column: number]: boolean };
   };
-  handleClick: (row: number, column: number) => void;
+  handleMainClick: (row: number, column: number) => void;
+  handleSquareRightClick: (event: React.MouseEvent<HTMLElement>, row: number, column: number) => void;
   isGameOver: boolean;
   isGameStarted: boolean;
   numberOfMinesOnBoard: number;
@@ -23,9 +27,11 @@ interface GameboardProps {
 
 const Gameboard = (props: GameboardProps): JSX.Element => {
   const {
+    gameboardFlagSquareLocations,
     gameboardMineSquareLocations,
     gameboardOpenSquareLocations,
-    handleClick,
+    handleMainClick,
+    handleSquareRightClick,
     isGameOver,
     isGameStarted,
     numberOfNeighborsWhoAreMines,
@@ -58,7 +64,8 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
             (_, columnIndex) => (
               <Square
                 key={columnIndex}
-                handleClick={() => handleClick(rowIndex, columnIndex)}
+                handleMainClick={() => handleMainClick(rowIndex, columnIndex)}
+                handleSquareRightClick={(event: React.MouseEvent<HTMLElement>) => handleSquareRightClick(event, rowIndex, columnIndex)}
                 isGameStarted={isGameStarted}
                 isGameOver={isGameOver}
                 isMine={
@@ -72,7 +79,11 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                     gameboardOpenSquareLocations[rowIndex][columnIndex]) ??
                   false
                 }
-                isFlagged={false}
+                isFlagged={
+                  (gameboardFlagSquareLocations[rowIndex] &&
+                    gameboardFlagSquareLocations[rowIndex][columnIndex]) ??
+                  false
+                }
                 numberOfNeighborsWhoAreMines={
                   numberOfNeighborsWhoAreMines[rowIndex] &&
                   numberOfNeighborsWhoAreMines[rowIndex][columnIndex]
