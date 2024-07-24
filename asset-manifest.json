@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/jasmatazzy/minesweeper/static/css/main.13ba659e.css",
+    "main.js": "/jasmatazzy/minesweeper/static/js/main.fb7d65f5.js",
+    "static/js/453.ed3810f9.chunk.js": "/jasmatazzy/minesweeper/static/js/453.ed3810f9.chunk.js",
+    "static/media/icon-start-game.png": "/jasmatazzy/minesweeper/static/media/icon-start-game.e4f640eaf23fb6e94624.png",
+    "index.html": "/jasmatazzy/minesweeper/index.html",
+    "main.13ba659e.css.map": "/jasmatazzy/minesweeper/static/css/main.13ba659e.css.map",
+    "main.fb7d65f5.js.map": "/jasmatazzy/minesweeper/static/js/main.fb7d65f5.js.map",
+    "453.ed3810f9.chunk.js.map": "/jasmatazzy/minesweeper/static/js/453.ed3810f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.13ba659e.css",
+    "static/js/main.fb7d65f5.js"
+  ]
+}
