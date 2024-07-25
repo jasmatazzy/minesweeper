@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import "./style.css";
 interface SquareProps {
   handleMainClick: () => void;
   handleSquareDoubleClick: () => void;
@@ -29,9 +28,16 @@ const Square: FC<SquareProps> = (props) => {
     <button
       onClick={handleMainClick}
       onContextMenu={handleSquareRightClick}
+      // onMouseUp={handleSquareRightClick}
       onDoubleClick={handleSquareDoubleClick}
       style={{
-        backgroundColor: isSquareOpen || isFlagged ? "lightGray" : "gray",
+        backgroundColor: (isSquareOpen && !isMine) || isFlagged  ? "lightGray" : "gray",
+        boxSizing: "border-box",
+        height: "30px",
+        minWidth: "30px",
+        width: "30px",
+        // display: "flex",
+        fontSize: "20px",
       }}
     >
       {isGameStarted &&
