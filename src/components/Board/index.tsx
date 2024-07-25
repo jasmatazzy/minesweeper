@@ -127,7 +127,7 @@ const Board = (props: BoardProps): JSX.Element => {
     setNumberOfMinesOnBoard(mineCount);
   };
 
-  const handleGameStarted = () => {
+  const handleGameStarted = (startRow: number, startColumn: number) => {
     //distribute mines at random throughout the board & notify all neighbors that a new mine has moved into the neighborhood
     const buryTheMinesAndNotifyNewNeighbors = (): {
       [row: number]: { [column: number]: true };
@@ -140,10 +140,22 @@ const Board = (props: BoardProps): JSX.Element => {
         const randomColumn = Math.floor(
           Math.random() * numberOfSquaresOnEachRow
         );
-        const isMineAlreadyBuried =
-          mineLocationsObject[randomRow] &&
-          mineLocationsObject[randomRow][randomColumn];
-        if (!isMineAlreadyBuried) {
+
+        const noMinesAllowed =
+          (mineLocationsObject[randomRow] &&
+            mineLocationsObject[randomRow][randomColumn]) ||
+          (randomRow === startRow && randomColumn === startColumn) ||
+          squareNeighborLookup(
+            randomRow,
+            randomColumn,
+            numberOfRowsOnBoard,
+            numberOfSquaresOnEachRow
+          ).some((neighbor) => {
+            const { row, column } = neighbor;
+            return row === startRow && column === startColumn;
+          });
+
+        if (!noMinesAllowed) {
           if (!mineLocationsObject[randomRow]) {
             mineLocationsObject[randomRow] = {};
           }
@@ -238,7 +250,7 @@ const Board = (props: BoardProps): JSX.Element => {
     )
       return;
     if (!isGameStarted) {
-      handleGameStarted();
+      handleGameStarted(squareRow, squareColumn);
       return;
     }
     const neighbors = (
@@ -371,6 +383,38 @@ const Board = (props: BoardProps): JSX.Element => {
       ...updatedStateOfFlagLocations,
     }));
   };
+  const handleSquareRightClickMouseUp = (
+    event: React.MouseEvent<HTMLElement>,
+    squareRow: number,
+    squareColumn: number
+  ) => {
+    /*
+    A square is flag eligible if it is not open. A square is peek eligible if it has neighbors who are not open (come back to this. Instead of just returning for gameboardOpenSquareLocations first check if it is peek eligible).
+    If square is not already open, set flag to true, disable the square from being clicked. If square is already open:
+    If on first right click "toggle," highlight the square's neighbors, and leave them highlit on mouseup. If on second
+    right click toggle, un-highlight the square's neighbors on mouseup;
+    */
+    event.preventDefault();
+    const updatedStateOfFlagLocations = { ...gameboardFlagSquareLocations };
+    if (
+      (gameboardOpenSquareLocations[squareRow] &&
+        gameboardOpenSquareLocations[squareRow][squareColumn]) ||
+      isGameOver
+    )
+      return;
+    if (
+      gameboardFlagSquareLocations[squareRow] &&
+      gameboardFlagSquareLocations[squareRow][squareColumn]
+    ) {
+      delete updatedStateOfFlagLocations[squareRow][squareColumn];
+    } else {
+      addToLookupTable(squareRow, squareColumn, updatedStateOfFlagLocations);
+    }
+    return setGameboardFlagSquareLocations((prevState) => ({
+      ...prevState,
+      ...updatedStateOfFlagLocations,
+    }));
+  };
 
   return (
     <div>
@@ -378,7 +422,7 @@ const Board = (props: BoardProps): JSX.Element => {
         getMineCount={handleSetMineCount}
         isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
-        startGame={handleGameStarted}
+        startGame={() => handleGameStarted}
       />
       <Gameboard
         gameboardFlagSquareLocations={gameboardFlagSquareLocations}
