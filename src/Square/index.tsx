@@ -36,8 +36,7 @@ const Square: FC<SquareProps> = (props) => {
         height: "30px",
         minWidth: "30px",
         width: "30px",
-        // display: "flex",
-        fontSize: "20px",
+        fontSize: "10px",
       }}
     >
       {isGameStarted &&
