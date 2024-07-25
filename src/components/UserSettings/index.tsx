@@ -15,9 +15,7 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
     <form
       style={{
         display: "flex",
-        justifyContent: "space-around",
-        maxWidth: numberOfMinesOnBoard * 15,
-        // This should be number of columns * some constant so that it's always relative
+        justifyContent: "space-around"
       }}
     >
       <div>
