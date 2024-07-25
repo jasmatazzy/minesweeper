@@ -127,11 +127,6 @@ const Board = (props: BoardProps): JSX.Element => {
     setNumberOfMinesOnBoard(mineCount);
   };
 
-  const handleSetSquaresState = () => {
-    /*
-     */
-  };
-
   const handleGameStarted = () => {
     //distribute mines at random throughout the board & notify all neighbors that a new mine has moved into the neighborhood
     const buryTheMinesAndNotifyNewNeighbors = (): {
@@ -243,7 +238,7 @@ const Board = (props: BoardProps): JSX.Element => {
     )
       return;
     if (!isGameStarted) {
-      alert(`🚧 work in progress. Hit the Banksy to begin.`);
+      handleGameStarted();
       return;
     }
     const neighbors = (
