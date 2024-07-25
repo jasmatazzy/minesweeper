@@ -6,7 +6,7 @@ const Main = (): JSX.Element => {
     <div
     style={{padding: "30px"}}
     >
-      <div>💃🏾 This IS Minesweeper</div>
+      {/* <div>💃🏾 This IS Minesweeper</div> */}
       <Board />
     </div>
   );

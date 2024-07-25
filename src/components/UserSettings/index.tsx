@@ -28,7 +28,8 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
         ></input>
       </div>
       <div>
-        <label htmlFor="start-game">Press Start ➡:</label>
+        🚧 Work in progress— click the <b>same</b> square <b>twice</b> to begin.
+        {/* <label htmlFor="start-game">Press Start ➡:</label>
         <input
           id="start-game"
           alt="Submit"
@@ -41,7 +42,7 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
             event.preventDefault();
             !isGameStarted && startGame();
           }}
-        ></input>
+        ></input> */}
       </div>
     </form>
   );
