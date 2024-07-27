@@ -378,10 +378,11 @@ const Board = (props: BoardProps): JSX.Element => {
     } else {
       addToLookupTable(squareRow, squareColumn, updatedStateOfFlagLocations);
     }
-    return setGameboardFlagSquareLocations((prevState) => ({
+    setGameboardFlagSquareLocations((prevState) => ({
       ...prevState,
       ...updatedStateOfFlagLocations,
     }));
+    return false;
   };
   const handleSquareRightClickMouseUp = (
     event: React.MouseEvent<HTMLElement>,
