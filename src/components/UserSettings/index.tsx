@@ -28,7 +28,7 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
         ></input>
       </div>
       <div>
-        🚧 Work in progress— click the <b>same</b> square <b>twice</b> to begin.
+      🚧🚧 Work in progress— click the <b>same</b> square <b>twice</b> to begin.
         {/* <label htmlFor="start-game">Press Start ➡:</label>
         <input
           id="start-game"
