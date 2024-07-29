@@ -175,6 +175,7 @@ const Board = (props: BoardProps): JSX.Element => {
         );
         neighborsOfMines.forEach((neighbor) => {
           const { row, column } = neighbor;
+          console.log(`i'm the neighbor ${row} ${column}`);
           setNumberOfNeighborsWhoAreMines((prevState) => {
             const newState = { ...prevState };
             if (prevState[row]) {
@@ -432,7 +433,6 @@ const Board = (props: BoardProps): JSX.Element => {
         getMineCount={handleSetMineCount}
         isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
-        startGame={() => handleGameStarted}
       />
       <Gameboard
         gameboardFlagSquareLocations={gameboardFlagSquareLocations}

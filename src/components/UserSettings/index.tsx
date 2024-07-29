@@ -1,15 +1,13 @@
 import React from "react";
-import startGameIcon from "../../assets/icon-start-game.png";
 
 interface UserSettingsProps {
   getMineCount: () => void;
   numberOfMinesOnBoard: number;
-  startGame: () => void;
   isGameStarted: boolean;
 }
 
 const UserSettings = (props: UserSettingsProps): JSX.Element => {
-  const { getMineCount, isGameStarted, numberOfMinesOnBoard, startGame } =
+  const { getMineCount, isGameStarted, numberOfMinesOnBoard } =
     props;
   return (
     <form
