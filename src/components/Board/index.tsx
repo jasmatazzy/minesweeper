@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import Gameboard from "../Gameboard/";
 import UserSettings from "../UserSettings";
-import squareNeighborLookup from "../../functions/squareNeighborLookup";
+import squareNeighborLookUp from "../../functions/squareNeighborLookUp";
 
 interface BoardProps {}
 
@@ -66,7 +66,7 @@ const Board = (props: BoardProps): JSX.Element => {
     squareColumn: number
   ) => {
     let counter = 0;
-    const neighbors = squareNeighborLookup(
+    const neighbors = squareNeighborLookUp(
       squareRow,
       squareColumn,
       numberOfRowsOnBoard,
@@ -145,7 +145,7 @@ const Board = (props: BoardProps): JSX.Element => {
           (mineLocationsObject[randomRow] &&
             mineLocationsObject[randomRow][randomColumn]) ||
           (randomRow === startRow && randomColumn === startColumn) ||
-          squareNeighborLookup(
+          squareNeighborLookUp(
             randomRow,
             randomColumn,
             numberOfRowsOnBoard,
@@ -167,7 +167,7 @@ const Board = (props: BoardProps): JSX.Element => {
 
       mineLocationsArray.forEach((mineLocation) => {
         const { row, column } = mineLocation;
-        const neighborsOfMines = squareNeighborLookup(
+        const neighborsOfMines = squareNeighborLookUp(
           row,
           column,
           numberOfRowsOnBoard,
@@ -209,6 +209,8 @@ const Board = (props: BoardProps): JSX.Element => {
     - openNeighbors
       */
   };
+
+
 
   const tempState: LookUpTable = { ...gameboardOpenSquareLocations };
   const handleSquareMainClick = (squareRow: number, squareColumn: number) => {
@@ -257,7 +259,7 @@ const Board = (props: BoardProps): JSX.Element => {
       row: number,
       column: number
     ): { row: number; column: number }[] =>
-      squareNeighborLookup(
+      squareNeighborLookUp(
         row,
         column,
         numberOfRowsOnBoard,
@@ -321,8 +323,16 @@ const Board = (props: BoardProps): JSX.Element => {
     }
   };
 
+  const handleSquareLeftClick = (row: number, column: number) => {
+    if (!isGameStarted) {
+      handleGameStarted(row, column);
+    }
+    //check if it was a single or a double click event, and run the appropriate callback
+    handleSquareMainClick(row, column);
+  };
+
   const handleSquareDoubleClick = (squareRow: number, squareColumn: number) => {
-    const neighbors = squareNeighborLookup(
+    const neighbors = squareNeighborLookUp(
       squareRow,
       squareColumn,
       numberOfRowsOnBoard,
@@ -428,8 +438,8 @@ const Board = (props: BoardProps): JSX.Element => {
         gameboardFlagSquareLocations={gameboardFlagSquareLocations}
         gameboardMineSquareLocations={gameboardMineSquareLocations}
         gameboardOpenSquareLocations={gameboardOpenSquareLocations}
-        handleMainClick={handleSquareMainClick}
         handleSquareDoubleClick={handleSquareDoubleClick}
+        handleSquareLeftClick={handleSquareLeftClick}
         handleSquareRightClick={handleSquareRightClick}
         isGameOver={isGameOver}
         isGameStarted={isGameStarted}

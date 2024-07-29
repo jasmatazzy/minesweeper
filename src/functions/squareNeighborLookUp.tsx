@@ -1,10 +1,10 @@
-interface squareNeighborLookupProps {
+interface squareNeighborLookUpProps {
     squareRow: number;
     squareColumn: number;
     totalRows: number;
     totalColumns: number;
   }
-  const squareNeighborLookup = (squareRow:number, squareColumn:number, totalRows:number, totalColumns:number): ({row:number, column:number}[]) => {
+  const squareNeighborLookUp = (squareRow:number, squareColumn:number, totalRows:number, totalColumns:number): ({row:number, column:number}[]) => {
     // const { squareRow, squareColumn, totalRows, totalColumns } = props;
   
     let existingNeighbors: {row:number, column:number}[] = []
@@ -44,5 +44,5 @@ interface squareNeighborLookupProps {
     return existingNeighbors
   };
   
-  export default squareNeighborLookup;
+  export default squareNeighborLookUp;
   

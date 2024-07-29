@@ -30,7 +30,7 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
         ></input>
       </div>
       <div>
-        <label htmlFor="start-game">Press Start ➡:</label>
+      🚧 Work in progress— click the <b>same</b> square <b>twice</b> to begin.
         <input
           id="start-game"
           alt="Submit"

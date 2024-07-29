@@ -1,8 +1,10 @@
 import React, { FC } from "react";
 import "./style.css";
 interface SquareProps {
-  handleMainClick: () => void;
-  handleSquareDoubleClick: () => void;
+  handleSquareLeftClick: (
+  ) => void;
+  handleSquareDoubleClick: (
+  ) => void;
   handleSquareRightClick: (event: React.MouseEvent<HTMLElement>) => void;
   isMine: boolean;
   isFlagged: boolean;
@@ -14,7 +16,7 @@ interface SquareProps {
 }
 const Square: FC<SquareProps> = (props) => {
   const {
-    handleMainClick,
+    handleSquareLeftClick,
     handleSquareDoubleClick,
     handleSquareRightClick,
     isMine,
@@ -27,15 +29,28 @@ const Square: FC<SquareProps> = (props) => {
   } = props;
   return (
     <button
-      onClick={handleMainClick}
+      // onClick={handleMainClick}
       onContextMenu={handleSquareRightClick}
+      // // onMouseUp={handleSquareRightClick}
       onDoubleClick={handleSquareDoubleClick}
       style={{
-        backgroundColor: isSquareOpen || isFlagged ? "lightGray" : "gray",
+        backgroundColor:
+          (isSquareOpen && !isMine) || isFlagged ? "lightGray" : "gray",
+        boxSizing: "border-box",
+        height: "30px",
+        minWidth: "30px",
+        width: "30px",
+        fontSize: "10px",
       }}
+      onClick={()=>handleSquareLeftClick()}
+      
     >
       {isGameStarted &&
-        (isGameOver && isFlagged && !isMine ? `😩🚫` : isGameOver && isFlagged && isMine ? `✅💣` : isSquareOpen && isMine
+        (isGameOver && isFlagged && !isMine
+          ? `😩🚫`
+          : isGameOver && isFlagged && isMine
+          ? `✅💣`
+          : isSquareOpen && isMine
           ? `💣`
           : isSquareOpen && numberOfNeighborsWhoAreMines > 0
           ? numberOfNeighborsWhoAreMines
@@ -43,9 +58,8 @@ const Square: FC<SquareProps> = (props) => {
           ? `🚩`
           : isSquareOpen && numberOfNeighborsWhoAreMines === 0
           ? " "
-          : " ")
-          }
-          {/* {optionalText} */}
+          : " ")}
+      {/* {optionalText} */}
     </button>
   );
 };

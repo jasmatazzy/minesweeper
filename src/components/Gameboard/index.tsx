@@ -13,8 +13,8 @@ interface GameboardProps {
   gameboardOpenSquareLocations: {
     [row: number]: { [column: number]: boolean };
   };
-  handleMainClick: (row: number, column: number) => void;
   handleSquareDoubleClick: (row: number, column: number) => void;
+  handleSquareLeftClick: (row: number, column: number) => void;
   handleSquareRightClick: (
     event: React.MouseEvent<HTMLElement>,
     row: number,
@@ -31,13 +31,31 @@ interface GameboardProps {
   numberOfSquaresOnEachRow: number;
 }
 
+interface SquareProps {
+  onClick: () => void;
+
+  handleSquareRightClick: (event: React.MouseEvent<HTMLElement>) => void;
+
+  isGameStarted: boolean;
+
+  isGameOver: boolean;
+
+  isMine: boolean;
+
+  isSquareOpen: boolean;
+
+  isFlagged: boolean;
+
+  numberOfNeighborsWhoAreMines: number;
+}
+
 const Gameboard = (props: GameboardProps): JSX.Element => {
   const {
     gameboardFlagSquareLocations,
     gameboardMineSquareLocations,
     gameboardOpenSquareLocations,
     handleSquareDoubleClick,
-    handleMainClick,
+    handleSquareLeftClick,
     handleSquareRightClick,
     isGameOver,
     isGameStarted,
@@ -72,10 +90,10 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
             (_, columnIndex) => (
               <Square
                 key={columnIndex}
-                handleMainClick={() => handleMainClick(rowIndex, columnIndex)}
-                handleSquareDoubleClick={() =>
-                  handleSquareDoubleClick(rowIndex, columnIndex)
+                handleSquareLeftClick={() =>
+                  handleSquareLeftClick(rowIndex, columnIndex)
                 }
+                handleSquareDoubleClick={() => handleSquareDoubleClick(rowIndex, columnIndex)}
                 handleSquareRightClick={(
                   event: React.MouseEvent<HTMLElement>
                 ) => handleSquareRightClick(event, rowIndex, columnIndex)}
