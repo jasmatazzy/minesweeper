@@ -12,24 +12,29 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
   const { getMineCount, isGameStarted, numberOfMinesOnBoard, startGame } =
     props;
   return (
-    <form
-      style={{
-        display: "flex",
-        justifyContent: "space-around"
-      }}
-    >
+    <div>
       <div>
-        <label htmlFor="mine-count">How many mines?:</label>
-        <input
-          id="mine-count"
-          onChange={getMineCount}
-          type="number"
-          value={numberOfMinesOnBoard}
-        ></input>
+        🤡🚧 Work in progress— click the <b>same</b> square <b>twice</b> to
+        begin.
       </div>
-      <div>
-      🚧🚧 Work in progress— click the <b>same</b> square <b>twice</b> to begin.
-        {/* <label htmlFor="start-game">Press Start ➡:</label>
+      <br/>
+      <form
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+        }}
+      >
+        <div>
+          <label htmlFor="mine-count">How many mines?:</label>
+          <input
+            id="mine-count"
+            onChange={getMineCount}
+            type="number"
+            value={numberOfMinesOnBoard}
+          ></input>
+        </div>
+        <div>
+          {/* <label htmlFor="start-game">Press Start ➡:</label>
         <input
           id="start-game"
           alt="Submit"
@@ -43,8 +48,9 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
             !isGameStarted && startGame();
           }}
         ></input> */}
-      </div>
-    </form>
+        </div>
+      </form>
+    </div>
   );
 };
 
