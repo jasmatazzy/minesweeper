@@ -31,19 +31,6 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
       </div>
       <div>
       🚧 Work in progress— click the <b>same</b> square <b>twice</b> to begin.
-        <input
-          id="start-game"
-          alt="Submit"
-          height="48"
-          name="start-game"
-          src={startGameIcon}
-          type="image"
-          width="48"
-          onClick={(event) => {
-            event.preventDefault();
-            !isGameStarted && startGame();
-          }}
-        ></input>
       </div>
     </form>
   );
