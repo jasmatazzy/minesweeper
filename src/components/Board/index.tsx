@@ -362,6 +362,8 @@ const Board = (props: BoardProps): JSX.Element => {
     right click toggle, un-highlight the square's neighbors on mouseup;
     */
 
+    if (!isGameStarted) return;
+
     const updatedStateOfFlagLocations = { ...gameboardFlagSquareLocations };
     if (
       (gameboardOpenSquareLocations[squareRow] &&
