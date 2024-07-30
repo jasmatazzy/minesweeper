@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Row from "../Row";
-import Square from "../../Square";
+import SquareButton from "../../SquareButton";
+
 // import LookUpTable from "../Board";
 
 interface GameboardProps {
@@ -69,7 +70,7 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
           {Array.from(
             { length: numberOfSquaresOnEachRow },
             (_, columnIndex) => (
-              <Square
+              <SquareButton
                 key={columnIndex}
                 handleMainClick={() => handleMainClick(rowIndex, columnIndex)}
                 handleSquareDoubleClick={() =>
