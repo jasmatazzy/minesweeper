@@ -29,12 +29,14 @@ const SquareButton: FC<SquareProps> = (props) => {
   let timerId: NodeJS.Timeout;
 
   const handleTouchStart = () => {
+    if (!isGameStarted) return;
     timerId = setTimeout(() => {
       setLongPress(true);
     }, 300);
   };
-
+  
   const handleTouchEnd = (event: React.TouchEvent) => {
+    if (!isGameStarted) return;
     clearTimeout(timerId);
     if (longPress) {
       event.preventDefault();
