@@ -333,7 +333,6 @@ const Board = (props: BoardProps): JSX.Element => {
       numberOfRowsOnBoard,
       numberOfSquaresOnEachRow
     );
-    console.log(`doubleclicked`);
     if (
       (gameboardFlagSquareLocations[squareRow] &&
         gameboardFlagSquareLocations[squareRow][squareColumn]) ||
@@ -419,36 +418,39 @@ const Board = (props: BoardProps): JSX.Element => {
     }));
   };
 
+  const namedObjectValueCounter = (tableToCount: LookUpTable): number => {
+    return Object.values(tableToCount).reduce(
+      (acc, curr) => acc + Object.keys(curr).length,
+      0
+    );
+  };
+
   useEffect(() => {
     if (isGameStarted) {
       const checkWinLossGameStatus = () => {
         const numberOfTotalSquares =
           numberOfRowsOnBoard * numberOfSquaresOnEachRow;
-        const numberOfOpenSquares = Object.keys(
+        const numberOfOpenSquares = namedObjectValueCounter(
           gameboardOpenSquareLocations
-        ).length;
-        if (
-          numberOfTotalSquares - numberOfMinesOnBoard >=
-          numberOfOpenSquares
-        ) {
-          return;
-        }
-        if (
-          numberOfTotalSquares - numberOfMinesOnBoard ===
-          numberOfOpenSquares
-        ) {
+        );
+        const numberOfFlaggedSquares = namedObjectValueCounter(
+          gameboardFlagSquareLocations
+        );
+
+        const userWonGame =
+          numberOfTotalSquares - numberOfMinesOnBoard === numberOfOpenSquares;
+        const tooManyFlags = numberOfMinesOnBoard < numberOfFlaggedSquares;
+
+        if (userWonGame) {
           setIsGameWon(true);
         }
-        if (
-          numberOfTotalSquares - numberOfMinesOnBoard ===
-          numberOfOpenSquares
-        ) {
+        if (tooManyFlags) {
           window.alert(`you got more flags than mines bruh`);
         }
       };
       checkWinLossGameStatus();
     }
-  }, [isGameStarted, gameboardOpenSquareLocations]);
+  }, [gameboardOpenSquareLocations, gameboardFlagSquareLocations]);
 
   return (
     <div>
