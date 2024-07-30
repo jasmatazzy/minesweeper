@@ -4,20 +4,43 @@ import startGameIcon from "../../assets/icon-start-game.png";
 interface UserSettingsProps {
   getMineCount: () => void;
   numberOfMinesOnBoard: number;
+  numberOfTotalSquares: number;
+  numberOfOpenSquares: number;
+  numberOfFlaggedSquares: number;
   startGame: () => void;
   isGameStarted: boolean;
 }
 
 const UserSettings = (props: UserSettingsProps): JSX.Element => {
-  const { getMineCount, isGameStarted, numberOfMinesOnBoard, startGame } =
-    props;
+  const {
+    getMineCount,
+    isGameStarted,
+    numberOfMinesOnBoard,
+    numberOfTotalSquares,
+    numberOfOpenSquares,
+    numberOfFlaggedSquares,
+  } = props;
   return (
     <div>
       <div>
-        🚧 Work in progress— click the <b>same</b> square <b>twice</b> to
-        begin.
+        {!isGameStarted && (
+          <div>
+            `🚧 Work in progress— click the <b>same</b> square <b>twice</b> to
+            begin.`
+          </div>
+        )}
+        {isGameStarted && (
+          <div>
+            Squares Opened so far: {numberOfOpenSquares}
+            <br />
+            Squares Flagged so far: {numberOfFlaggedSquares}
+            <br />
+            Flags left: {numberOfMinesOnBoard - numberOfFlaggedSquares}
+            <br />
+          </div>
+        )}
       </div>
-      <br/>
+      <br />
       <form
         style={{
           display: "flex",
