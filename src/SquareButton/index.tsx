@@ -34,7 +34,7 @@ const SquareButton: FC<SquareProps> = (props) => {
       setLongPress(true);
     }, 300);
   };
-  
+
   const handleTouchEnd = (event: React.TouchEvent) => {
     if (!isGameStarted) return;
     clearTimeout(timerId);
@@ -44,6 +44,22 @@ const SquareButton: FC<SquareProps> = (props) => {
       setLongPress(false);
     }
   };
+
+  const displayEmojiOrNumber = () => {
+    if (isGameOver && isMine) {
+      return `💣`;
+    } else if (isGameOver && isFlagged && !isMine) {
+      return `😩🚫`;
+    } else if (isGameOver && isFlagged && isMine) {
+      return `✅💣`;
+    } else if (isSquareOpen && numberOfNeighborsWhoAreMines > 0) {
+      return numberOfNeighborsWhoAreMines;
+    } else if (isFlagged) {
+      return `🚩`;
+    } else if (isSquareOpen && numberOfNeighborsWhoAreMines ===undefined) {
+      return " ";
+    }
+  }
 
   return (
     <button
@@ -67,18 +83,8 @@ const SquareButton: FC<SquareProps> = (props) => {
         WebkitUserSelect: "none",
       }}
     >
-      {isGameStarted &&
-        (isGameOver && isFlagged && !isMine ? `😩🚫` : isGameOver && isFlagged && isMine ? `✅💣` : isSquareOpen && isMine
-          ? `💣`
-          : isSquareOpen && numberOfNeighborsWhoAreMines > 0
-          ? numberOfNeighborsWhoAreMines
-          : isFlagged
-          ? `🚩`
-          : isSquareOpen && numberOfNeighborsWhoAreMines === 0
-          ? " "
-          : " ")
-          }
-          {/* {optionalText} */}
+      {displayEmojiOrNumber()}
+      {/* {optionalText} */}
     </button>
   );
 };
