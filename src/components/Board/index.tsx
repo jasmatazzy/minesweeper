@@ -1,7 +1,7 @@
 //You will create a function who receives an array— this array is a report of neighbors who have no mine neighbors
 // function opens each square in list and also receives data about these secondary neighbors, and so on, until no one reports that they have a neighbor with no mine neighbors
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Gameboard from "../Gameboard/";
 import UserSettings from "../UserSettings";
 import squareNeighborLookup from "../../functions/squareNeighborLookup";
@@ -18,7 +18,7 @@ const Board = (props: BoardProps): JSX.Element => {
   /* STATE SETTERS for GameboardComponent*/
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isGameWon, setIsGameWon] = useState(true);
+  const [isGameWon, setIsGameWon] = useState(false);
   const [numberOfRowsOnBoard, setNumberOfRowsOnBoard] = useState(16);
   const [numberOfSquaresOnEachRow, setNumberOfSquaresOnEachRow] = useState(16);
   const [numberOfMinesOnBoard, setNumberOfMinesOnBoard] = useState(40);
@@ -135,34 +135,38 @@ const Board = (props: BoardProps): JSX.Element => {
       const mineLocationsObject: { [row: number]: { [column: number]: true } } =
         {};
       const mineLocationsArray: { row: number; column: number }[] = [];
-      Array.from({ length: numberOfMinesOnBoard }).forEach(() => {
-        const randomRow = Math.floor(Math.random() * numberOfRowsOnBoard);
-        const randomColumn = Math.floor(
-          Math.random() * numberOfSquaresOnEachRow
-        );
 
-        const noMinesAllowed =
-          (mineLocationsObject[randomRow] &&
-            mineLocationsObject[randomRow][randomColumn]) ||
+      const emptyArrayOfLengthNumberOfMinesOnBoard = Array.from({
+        length: numberOfMinesOnBoard,
+      });
+
+      emptyArrayOfLengthNumberOfMinesOnBoard.forEach(() => {
+        let randomRow = Math.floor(Math.random() * numberOfRowsOnBoard);
+        let randomColumn = Math.floor(Math.random() * numberOfSquaresOnEachRow);
+        while (
+          coordinatesExistInLookupTable(
+            randomRow,
+            randomColumn,
+            mineLocationsObject
+          ) ||
           (randomRow === startRow && randomColumn === startColumn) ||
           squareNeighborLookup(
             randomRow,
             randomColumn,
             numberOfRowsOnBoard,
             numberOfSquaresOnEachRow
-          ).some((neighbor) => {
-            const { row, column } = neighbor;
-            return row === startRow && column === startColumn;
-          });
-
-        if (!noMinesAllowed) {
-          if (!mineLocationsObject[randomRow]) {
-            mineLocationsObject[randomRow] = {};
-          }
-          mineLocationsObject[randomRow][randomColumn] = true;
-          mineLocationsArray.push({ row: randomRow, column: randomColumn });
+          ).some(
+            (neighbor) =>
+              neighbor.row === startRow && neighbor.column === startColumn
+          )
+        ) { 
+          randomRow = Math.floor(Math.random() * numberOfRowsOnBoard);
+          randomColumn = Math.floor(Math.random() * numberOfSquaresOnEachRow);
         }
+        mineLocationsArray.push({ row: randomRow, column: randomColumn });
+        addToLookupTable(randomRow, randomColumn, mineLocationsObject);
       });
+
       setGameboardMineSquareLocations(mineLocationsObject);
 
       mineLocationsArray.forEach((mineLocation) => {
@@ -246,7 +250,8 @@ const Board = (props: BoardProps): JSX.Element => {
         gameboardOpenSquareLocations[squareRow][squareColumn]) ||
       (gameboardFlagSquareLocations[squareRow] &&
         gameboardFlagSquareLocations[squareRow][squareColumn]) ||
-      isGameOver
+      isGameOver ||
+      isGameWon
     )
       return;
     if (!isGameStarted) {
@@ -351,10 +356,7 @@ const Board = (props: BoardProps): JSX.Element => {
     or has a flag or is not shortcut eligible, do not handle; otherwise, open all neighbor squares
     */
   };
-  const handleSquareRightClick = (
-    squareRow: number,
-    squareColumn: number
-  ) => {
+  const handleSquareRightClick = (squareRow: number, squareColumn: number) => {
     /*
     A square is flag eligible if it is not open. A square is peek eligible if it has neighbors who are not open (come back to this. Instead of just returning for gameboardOpenSquareLocations first check if it is peek eligible).
     If square is not already open, set flag to true, disable the square from being clicked. If square is already open:
@@ -417,6 +419,37 @@ const Board = (props: BoardProps): JSX.Element => {
     }));
   };
 
+  useEffect(() => {
+    if (isGameStarted) {
+      const checkWinLossGameStatus = () => {
+        const numberOfTotalSquares =
+          numberOfRowsOnBoard * numberOfSquaresOnEachRow;
+        const numberOfOpenSquares = Object.keys(
+          gameboardOpenSquareLocations
+        ).length;
+        if (
+          numberOfTotalSquares - numberOfMinesOnBoard >=
+          numberOfOpenSquares
+        ) {
+          return;
+        }
+        if (
+          numberOfTotalSquares - numberOfMinesOnBoard ===
+          numberOfOpenSquares
+        ) {
+          setIsGameWon(true);
+        }
+        if (
+          numberOfTotalSquares - numberOfMinesOnBoard ===
+          numberOfOpenSquares
+        ) {
+          window.alert(`you got more flags than mines bruh`);
+        }
+      };
+      checkWinLossGameStatus();
+    }
+  }, [isGameStarted, gameboardOpenSquareLocations]);
+
   return (
     <div>
       <UserSettings
@@ -434,6 +467,7 @@ const Board = (props: BoardProps): JSX.Element => {
         handleSquareRightClick={handleSquareRightClick}
         isGameOver={isGameOver}
         isGameStarted={isGameStarted}
+        isGameWon={isGameWon}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
         numberOfNeighborsWhoAreFlags={numberOfNeighborsWhoAreFlags}
         numberOfNeighborsWhoAreMines={numberOfNeighborsWhoAreMines}
