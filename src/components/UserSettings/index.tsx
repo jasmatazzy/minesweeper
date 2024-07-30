@@ -22,15 +22,23 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
   } = props;
   return (
     <div>
-      <div>
+      <div
+        style={{
+          height: "100px",
+        }}
+      >
         {!isGameStarted && (
           <div>
             `🚧 Work in progress— click the <b>same</b> square <b>twice</b> to
             begin.`
+            <br />
+            <br />
+            <br />
           </div>
         )}
         {isGameStarted && (
           <div>
+            <br />
             Squares Opened so far: {numberOfOpenSquares}
             <br />
             Squares Flagged so far: {numberOfFlaggedSquares}
