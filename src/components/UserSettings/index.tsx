@@ -14,7 +14,7 @@ const UserSettings = (props: UserSettingsProps): JSX.Element => {
   return (
     <div>
       <div>
-        🤡🚧 Work in progress— click the <b>same</b> square <b>twice</b> to
+        🚧 Work in progress— click the <b>same</b> square <b>twice</b> to
         begin.
       </div>
       <br/>
