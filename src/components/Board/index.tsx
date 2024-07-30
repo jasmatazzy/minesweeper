@@ -84,6 +84,25 @@ const Board = (props: BoardProps): JSX.Element => {
     return counter;
   };
 
+  const namedObjectValueCounter = (tableToCount: LookUpTable): number => {
+    return Object.values(tableToCount).reduce(
+      (acc, curr) => acc + Object.keys(curr).length,
+      0
+    );
+  };
+
+  const numberOfTotalSquares = numberOfRowsOnBoard * numberOfSquaresOnEachRow;
+  const numberOfOpenSquares = namedObjectValueCounter(
+    gameboardOpenSquareLocations
+  );
+  const numberOfFlaggedSquares = namedObjectValueCounter(
+    gameboardFlagSquareLocations
+  );
+
+  const userWonGame =
+    numberOfTotalSquares - numberOfMinesOnBoard === numberOfOpenSquares;
+  const tooManyFlags = numberOfMinesOnBoard < numberOfFlaggedSquares;
+
   /* EVENT HANDLERS */
 
   const addToLookupTable = (
@@ -159,7 +178,7 @@ const Board = (props: BoardProps): JSX.Element => {
             (neighbor) =>
               neighbor.row === startRow && neighbor.column === startColumn
           )
-        ) { 
+        ) {
           randomRow = Math.floor(Math.random() * numberOfRowsOnBoard);
           randomColumn = Math.floor(Math.random() * numberOfSquaresOnEachRow);
         }
@@ -418,29 +437,9 @@ const Board = (props: BoardProps): JSX.Element => {
     }));
   };
 
-  const namedObjectValueCounter = (tableToCount: LookUpTable): number => {
-    return Object.values(tableToCount).reduce(
-      (acc, curr) => acc + Object.keys(curr).length,
-      0
-    );
-  };
-
   useEffect(() => {
     if (isGameStarted) {
       const checkWinLossGameStatus = () => {
-        const numberOfTotalSquares =
-          numberOfRowsOnBoard * numberOfSquaresOnEachRow;
-        const numberOfOpenSquares = namedObjectValueCounter(
-          gameboardOpenSquareLocations
-        );
-        const numberOfFlaggedSquares = namedObjectValueCounter(
-          gameboardFlagSquareLocations
-        );
-
-        const userWonGame =
-          numberOfTotalSquares - numberOfMinesOnBoard === numberOfOpenSquares;
-        const tooManyFlags = numberOfMinesOnBoard < numberOfFlaggedSquares;
-
         if (userWonGame) {
           setIsGameWon(true);
         }
@@ -459,6 +458,10 @@ const Board = (props: BoardProps): JSX.Element => {
         isGameStarted={isGameStarted}
         numberOfMinesOnBoard={numberOfMinesOnBoard}
         startGame={() => handleGameStarted}
+        numberOfTotalSquares={numberOfTotalSquares}
+        numberOfOpenSquares={numberOfOpenSquares}
+        numberOfFlaggedSquares={numberOfFlaggedSquares}
+
       />
       <Gameboard
         gameboardFlagSquareLocations={gameboardFlagSquareLocations}
