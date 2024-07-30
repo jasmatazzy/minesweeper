@@ -2,7 +2,7 @@ import React, { FC } from "react";
 interface SquareProps {
   handleMainClick: () => void;
   handleSquareDoubleClick: () => void;
-  handleSquareRightClick: (event: React.MouseEvent<HTMLElement>) => void;
+  handleSquareRightClick: () => void;
   isMine: boolean;
   isFlagged: boolean;
   isGameStarted: boolean;
@@ -27,11 +27,15 @@ const Square: FC<SquareProps> = (props) => {
   return (
     <button
       onClick={handleMainClick}
-      onContextMenu={handleSquareRightClick}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        handleSquareRightClick();
+      }}
       // onMouseUp={handleSquareRightClick}
       onDoubleClick={handleSquareDoubleClick}
       style={{
-        backgroundColor: (isSquareOpen && !isMine) || isFlagged  ? "lightGray" : "gray",
+        backgroundColor:
+          (isSquareOpen && !isMine) || isFlagged ? "lightGray" : "gray",
         boxSizing: "border-box",
         height: "30px",
         minWidth: "30px",

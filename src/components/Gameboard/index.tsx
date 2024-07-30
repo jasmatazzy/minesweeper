@@ -16,7 +16,6 @@ interface GameboardProps {
   handleMainClick: (row: number, column: number) => void;
   handleSquareDoubleClick: (row: number, column: number) => void;
   handleSquareRightClick: (
-    event: React.MouseEvent<HTMLElement>,
     row: number,
     column: number
   ) => void;
@@ -77,8 +76,7 @@ or columns, or when isGameStarted is set to true; Live board displays on final u
                   handleSquareDoubleClick(rowIndex, columnIndex)
                 }
                 handleSquareRightClick={(
-                  event: React.MouseEvent<HTMLElement>
-                ) => handleSquareRightClick(event, rowIndex, columnIndex)}
+                ) => handleSquareRightClick( rowIndex, columnIndex)}
                 isGameStarted={isGameStarted}
                 isGameOver={isGameOver}
                 isMine={

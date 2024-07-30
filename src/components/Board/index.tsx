@@ -352,7 +352,6 @@ const Board = (props: BoardProps): JSX.Element => {
     */
   };
   const handleSquareRightClick = (
-    event: React.MouseEvent<HTMLElement>,
     squareRow: number,
     squareColumn: number
   ) => {
@@ -362,8 +361,7 @@ const Board = (props: BoardProps): JSX.Element => {
     If on first right click "toggle," highlight the square's neighbors, and leave them highlit on mouseup. If on second
     right click toggle, un-highlight the square's neighbors on mouseup;
     */
-    event.preventDefault();
-    event.stopPropagation();
+
     const updatedStateOfFlagLocations = { ...gameboardFlagSquareLocations };
     if (
       (gameboardOpenSquareLocations[squareRow] &&
@@ -383,7 +381,6 @@ const Board = (props: BoardProps): JSX.Element => {
       ...prevState,
       ...updatedStateOfFlagLocations,
     }));
-    return false;
   };
   const handleSquareRightClickMouseUp = (
     event: React.MouseEvent<HTMLElement>,
