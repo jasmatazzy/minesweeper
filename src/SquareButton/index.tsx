@@ -31,7 +31,7 @@ const SquareButton: FC<SquareProps> = (props) => {
   const handleTouchStart = () => {
     timerId = setTimeout(() => {
       setLongPress(true);
-    }, 500);
+    }, 300);
   };
 
   const handleTouchEnd = (event: React.TouchEvent) => {
