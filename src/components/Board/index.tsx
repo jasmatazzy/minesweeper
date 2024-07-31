@@ -416,7 +416,7 @@ const Board = (props: BoardProps): JSX.Element => {
     right click toggle, un-highlight the square's neighbors on mouseup;
     */
     event.preventDefault();
-    const updatedStateOfFlagLocations = { ...gameboardFlagSquareLocations };
+    const updatedStateOfFlagLocations: LookUpTable = { ...gameboardFlagSquareLocations };
     if (
       (gameboardOpenSquareLocations[squareRow] &&
         gameboardOpenSquareLocations[squareRow][squareColumn]) ||
@@ -427,7 +427,9 @@ const Board = (props: BoardProps): JSX.Element => {
       gameboardFlagSquareLocations[squareRow] &&
       gameboardFlagSquareLocations[squareRow][squareColumn]
     ) {
-      delete updatedStateOfFlagLocations[squareRow][squareColumn];
+    const { [squareColumn]:_, ...everythingButTheEliminatedFlagSquare } = updatedStateOfFlagLocations[squareRow];
+    updatedStateOfFlagLocations[squareRow] = everythingButTheEliminatedFlagSquare;
+    
     } else {
       addToLookupTable(squareRow, squareColumn, updatedStateOfFlagLocations);
     }
